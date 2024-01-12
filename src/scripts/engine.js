@@ -8,13 +8,15 @@ const state = {
     },
 
     value:{
-            timerId:null,
-            gameVelocity:1000
+            timerId: null,
+            gameVelocity: 1000,
+            hitPosition: 0,
+            result: 0,
     }
 }
 
 function moveEnemy(){
-    state.values.timerId = setInterval(randomSquare, state.values.gameVelocity);
+    state.value.timerId = setInterval(randomSquare, state.value.gameVelocity);
 }
 
 function randomSquare(){
@@ -25,15 +27,27 @@ function randomSquare(){
     let randomNumber = Math.floor(Math.random()*9);
     let randomSquare = state.view.squares[randomNumber];
     randomSquare.classList.add("enemy"); 
+    state.value.hitPosition = randomSquare.id;
 }
 
 function addListenerHitbox(){
     state.view.squares.forEach((square) => {
+        square.addEventListener("mousedown", () => {
+            if(square.id === state.value.hitPosition){
+                state.value.result++;
+                state.view.score.textContent = state.value.result;
+                state.value.hitPosition = null;
+            }
+        });
     });
 }
 
+
+
+// main function
 function init(){
     moveEnemy();
+    addListenerHitbox();
 }
 
 init();
