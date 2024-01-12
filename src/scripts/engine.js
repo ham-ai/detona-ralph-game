@@ -8,16 +8,35 @@ const state = {
     },
 
     value:{
-            timerId: null,
-            gameVelocity: 1000,
-            hitPosition: 0,
-            result: 0,
+        gameVelocity: 1000,
+        hitPosition: 0,
+        result: 0,
+        time: 60,
+    },
+    
+    actions:{
+        timerId: setInterval(randomSquare, 1000),
+        countdownTimer: setInterval(countDown, 1000),
     }
 }
 
-function moveEnemy(){
-    state.value.timerId = setInterval(randomSquare, state.value.gameVelocity);
+function playSound(audioName) {
+    let audio = new Audio(`./src/audios/${audioName}.mp3`);
+    audio.volume = 0.2;
+    audio.play();
 }
+
+function countDown(){
+    state.value.time--;
+    state.view.timeLeft.textContent = state.value.time;
+
+    if(state.value.time <= 0){
+        clearInterval(state.actions.countdownTimer);
+        clearInterval(state.actions.timerId);
+        alert("O jogo acabou!\nSua pontuação foi... "+ state.value.result);
+    }
+}
+
 
 function randomSquare(){
     state.view.squares.forEach((square) =>{
@@ -37,16 +56,15 @@ function addListenerHitbox(){
                 state.value.result++;
                 state.view.score.textContent = state.value.result;
                 state.value.hitPosition = null;
+                playSound("ring");
             }
         });
     });
 }
 
 
-
 // main function
 function init(){
-    moveEnemy();
     addListenerHitbox();
 }
 
